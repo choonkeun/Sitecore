@@ -1,0 +1,594 @@
+﻿$path = "master:\media library\"
+get-childitem -Path $path -recurse `
+    | Sort-Object -Property ItemPath `
+    | format-Table Name, Id, Language, Templatename, ItemPath  
+
+
+Name                      ID                                     Language TemplateName ItemPath
+----                      --                                     -------- ------------ --------
+Default Website           {4D8A1C4D-1351-4DD1-A502-0660F01FEDC7} en       Media folder /sitecore/media library/Default Website
+cover                     {04DAD0FD-DB66-4070-881F-17264CA257E1} en       Jpeg         /sitecore/media library/Default Website/cover
+sc_logo                   {094AED03-02E7-4868-80CB-19926661FB77} en       Image        /sitecore/media library/Default Website/sc_logo
+Files                     {730C1699-87A4-4CA7-A9CE-294AD7151F13} en       Media folder /sitecore/media library/Files
+Images                    {15451229-7534-44EF-815D-D93D6170BFCB} en       Media folder /sitecore/media library/Images
+System                    {7F864298-A4D8-4CE5-B8AC-A6D4DBA439D3} en       Media folder /sitecore/media library/System
+Forms                     {9D479E06-809F-4B42-A13A-F42CD411934D} en       Media folder /sitecore/media library/System/Forms
+Form                      {6590E671-6D5E-449C-A85D-9D4BA36DC56B} en       Image        /sitecore/media library/System/Forms/Form
+Simulator Backgrounds     {76DBBDDE-9A96-414C-846F-36D7FD8BFDC3} en       Media folder /sitecore/media library/System/Simulator Backgrounds
+Android Phablet           {439294C7-AF89-4A72-BB74-2281705970F6} en       Image        /sitecore/media library/System/Simulator Backgrounds/Android Phablet
+
+---
+https://blog.najmanowicz.com/2011/11/18/sample-scripts-for-sitecore-powershell-console/
+
+Get-Help Get-Command
+
+Get-Command -CommandType Cmdlet -Module Microsoft.PowerShell.Management
+
+CommandType     Name                                               Version    Source
+-----------     ----                                               -------    ------
+Cmdlet          Add-Computer                                       3.0.0.0    Microsoft.PowerShell.Management
+Cmdlet          Add-Content                                        3.0.0.0    Microsoft.PowerShell.Management
+Cmdlet          Checkpoint-Computer                                3.0.0.0    Microsoft.PowerShell.Management
+Cmdlet          Clear-Content                                      3.0.0.0    Microsoft.PowerShell.Management
+
+Get-Command -CommandType Cmdlet -Module Microsoft.PowerShell.Utility
+
+
+CommandType     Name                                               Version    Source
+-----------     ----                                               -------    ------
+Cmdlet          Add-Member                                         3.0.0.0    Microsoft.PowerShell.Utility
+Cmdlet          Add-Type                                           3.0.0.0    Microsoft.PowerShell.Utility
+Cmdlet          Clear-Variable                                     3.0.0.0    Microsoft.PowerShell.Utility
+Cmdlet          Compare-Object                                     3.0.0.0    Microsoft.PowerShell.Utility
+
+
+---
+get-childitem | get-member -memberType property*
+
+---
+* List all items in the CMS of which template name contains "Default"
+
+$path = "master:\content\home\"
+Get-ChildItem -Path $path -Recurse `
+  | where-object { $_.TemplateName -match "Default" } `
+  | format-table DisplayName, Name, TemplateName
+
+---
+* List all subitems and how many days ago were they modified
+
+$path = "master:\media library\"
+get-childitem -Path $path -recurse `
+  | format-table -auto Name, `
+  @{Label="Days since modified"; Expression={ `
+  [datetime]::Now.Subtract($_.__Updated).Days} }
+
+---
+* Delete all pages that have not been modified for the last 365 days.
+
+$path = "master:\media library\"
+get-childitem -Path $path -recurse `
+  | where-object {[datetime]::Now.Subtract($_.__Updated).Days -gt 365 } `
+  | remove-item  
+  
+---
+* List all items Updated over the last 24 hours and who changed them.
+
+$path = "master:\media library\"
+get-childitem -Path $path -recurse `
+  | where-object { $_.__Updated -gt [datetime]::Now.AddDays(-1) } `
+  | format-table -property DisplayName, "__Updated By", {$_.Paths.Path}  
+
+---
+* List all pages that have their "Text" field filled in.
+
+$path = "master:\media library\"
+get-childitem -Path $path -recurse `
+  | where-object { $_.Text -ne $null } `
+  | format-table -property DisplayName, {$_.Paths.Path}
+
+---
+* Set a nice reviewer’s comment on all pages with their "Text" property filled in.
+
+$path = "master:\media library\"
+get-childitem -Path $path -recurse `
+  | where-object { $_.Text -ne $null } `
+  | foreach-object { $_.ReviewersComment = "Great job providing content!" }
+  
+---  
+* Add a warning to the beginning of "Text" property for all pages that have not been saved for the last 180 days.
+
+$path = "master:\media library\"
+get-childitem -Path $path -recurse `
+  | where-object {`
+  [datetime]::Now.Subtract($_.__Updated).Days -ge 180 `
+  -and $_.Text -ne $null }
+  | foreach-object {$_.Text = "<p style='color:red'>Old content. Review pending!</p>" + $_.Text }
+  
+---
+* Display the 10 most recently changed pages ordered in the reverse chronological order or changes. 
+  Display the page name, who changed it and when as well as the page status.
+
+get-childitem -recurse `
+  | Sort-Object -Property Name
+  | sort-object -property __Updated -descending `
+  | select-object -First 10 `
+  | format-table -property DisplayName, "__Updated By", __Updated
+
+---
+* Removes all .xml files from the "Old Xml Files" in Media library.
+
+cd "master:\media library\Old Xml Files"
+get-childitem -recurse `
+  | where-object { $_.Extension -match "xml" } `
+  | remove-item
+  
+---
+* Copy all files from the "staging" folder to the "production" folder in Media Library.
+  Copying files within media library is done as follows. This can also be done for items in the content branch.
+  
+copy-item "master:\media library\staging\*" "master:\media library\production\"  
+
+---
+$DefaultPath = "master:\Media Library\"
+Get-ChildItem -Path $DefaultPath -recurse `
+    | Foreach-Object { $_.TemplateName -notmatch $NamePart } `
+    | format-Table Name, Id, Language, Templatename, ItemPath   
+
+Name                      ID                                     Language TemplateName ItemPath
+----                      --                                     -------- ------------ --------
+Default Website           {4D8A1C4D-1351-4DD1-A502-0660F01FEDC7} en       Media folder /sitecore/media library/Default Website
+cover                     {04DAD0FD-DB66-4070-881F-17264CA257E1} en       Jpeg         /sitecore/media library/Default Website/cover
+sc_logo                   {094AED03-02E7-4868-80CB-19926661FB77} en       Image        /sitecore/media library/Default Website/sc_logo
+Files                     {730C1699-87A4-4CA7-A9CE-294AD7151F13} en       Media folder /sitecore/media library/Files
+
+---
+$NamePart = "Media folder"
+$DefaultPath = "master:/Media Library/"
+$DefaultPath = "master:\Media Library\"
+Get-ChildItem -Path $DefaultPath -recurse `
+    | sort-object -property __Updated -descending `
+    | where-object { $_.TemplateName -notmatch $NamePart } `
+    | where-object { $_.TemplateName -notmatch "Media folder" } `
+    | format-Table Name, Id, Language, Templatename, ItemPath  
+
+Name                      ID                                     Language TemplateName ItemPath
+----                      --                                     -------- ------------ --------
+cover                     {04DAD0FD-DB66-4070-881F-17264CA257E1} en       Jpeg         /sitecore/media library/Default Website/cover
+sc_logo                   {094AED03-02E7-4868-80CB-19926661FB77} en       Image        /sitecore/media library/Default Website/sc_logo
+Hero_Logo                 {B46CD53F-2BBD-4BC5-BE8A-95AE1CF62E9E} en       Image        /sitecore/media library/Images/Hero_Logo
+shutterstock_7507262231   {4D22FD5D-93D5-4484-A24E-20F0C11F61B4} en       Jpeg         /sitecore/media library/Images/shutterstock_7507262231
+Form                      {6590E671-6D5E-449C-A85D-9D4BA36DC56B} en       Image        /sitecore/media library/System/Forms/Form
+Android Phablet           {439294C7-AF89-4A72-BB74-2281705970F6} en       Image        /sitecore/media library/System/Simulator Backgrounds/Android Phablet
+Android Phablet Landscape {3C4269AD-19FE-4378-A51D-2690396B85C4} en       Image        /sitecore/media library/System/Simulator Backgrounds/Android Phablet Landscape
+Android Phone             {98EF24BE-026F-40CE-BE27-933AD4A05BF6} en       Image        /sitecore/media library/System/Simulator Backgrounds/Android Phone
+Android Phone_landscape   {E5391198-5B0F-4048-BECC-1856480D9384} en       Image        /sitecore/media library/System/Simulator Backgrounds/Android Phone_landscape
+Android Tablet            {B8415FE4-1F43-488E-8EA9-AEF1337EF914} en       Jpeg         /sitecore/media library/System/Simulator Backgrounds/Android Tablet
+---
+$NamePart = "Media folder"
+$DefaultPath = "master:\sitecore\"
+Get-ChildItem -Path $DefaultPath -recurse `
+    | sort-object -property ItemPath  `
+    | where-object { $_.TemplateName -notmatch $NamePart } `
+    | format-Table Name, Id, Language, Templatename, ItemPath  
+
+---
+$DefaultPath = "master:/Media Library/"
+Get-ChildItem -Path $DefaultPath -Recurse `
+    | where-object { $_.TemplateName -notmatch "Media folder" } `
+    | Foreach-Object { 
+        "Name: " + $_.Name + ", Path: " + $_.ItemPath
+    } 
+  
+Name: cover, Path: /sitecore/media library/Default Website/cover
+Name: sc_logo, Path: /sitecore/media library/Default Website/sc_logo
+Name: Hero_Logo, Path: /sitecore/media library/Images/Hero_Logo
+Name: shutterstock_7507262231, Path: /sitecore/media library/Images/shutterstock_7507262231
+Name: Form, Path: /sitecore/media library/System/Forms/Form
+Name: video, Path: /sitecore/media library/System/Template Thumbnails/video
+
+---
+$NamePart = "Media folder"
+$DefaultPath = "master:/Media Library/"
+$DefaultPath = "master:/Media Library/Images"
+Get-ChildItem -Path $DefaultPath -Recurse `
+    | where-object { $_.TemplateName -notmatch "Media folder" } `
+    | Foreach-Object { 
+        "Name: " + $_.Name + "Zip Code: " + $_.ZipCode + ", Path: " + $_.ItemPath
+    } 
+
+Name: Hero_LogoZip Code: 123456, Path: /sitecore/media library/Images/Hero_Logo
+Name: shutterstock_7507262231Zip Code: , Path: /sitecore/media library/Images/shutterstock_7507262231
+
+---
+$NamePart = "Media folder"
+$DefaultPath = "master:/Media Library/"
+$DefaultPath = "master:/Media Library/Images"
+Get-ChildItem -Path $DefaultPath -Recurse `
+    | where-object { $_.TemplateName -notmatch "Media folder" } `
+    | Foreach-Object { 
+        "Name: " + $_.Name + ", Zip Code: " + $_.ZipCode + ", Path: " + $_.ItemPath;
+        $_.Fields["ZipCode"];
+    } 
+
+Name: Hero_Logo, Zip Code: 123456, Path: /sitecore/media library/Images/Hero_Logo
+
+
+ContainsStandardValue         : False
+ContainsFallbackValue         : False
+IsValidForLanguageFallback    :
+InheritsValueFromOtherItem    : False
+FallbackValueSource           :
+InnerItem                     : Sitecore.Data.Items.Item
+Database                      : master
+Definition                    : Sitecore.Data.Templates.TemplateField
+Description                   :
+DisplayName                   : Zip Code
+SectionDisplayName            : Location
+HasBlobStream                 : False
+HasValue                      : True
+HelpLink                      :
+ID                            : {FB540BF1-B2EB-47C9-A55F-F01B2FCA5851}
+InheritedValue                : 123456
+IsBlobField                   : False
+IsModified                    : False
+Item                          : Sitecore.Data.Items.Item
+Key                           : zipcode
+Language                      : en
+SharedLanguageFallbackEnabled : False
+Name                          : ZipCode
+ResetBlank                    : False
+Section                       : Location
+SectionSortorder              : 400
+Shared                        : True
+ShouldBeTranslated            : False
+Sortorder                     : 787
+Source                        :
+Style                         :
+Title                         : Zip Code
+ToolTip                       :
+Translatable                  : False
+Type                          : Single-Line Text
+TypeKey                       : single-line text
+Unversioned                   : False
+Validation                    :
+ValidationText                :
+Value                         : 123456
+
+---
+$NamePart = "Media folder"
+$DefaultPath = "master:/Media Library/Images"
+Get-ChildItem -Path $DefaultPath -Recurse `
+    | where-object { $_.TemplateName -notmatch "Media folder" } `
+    | Foreach-Object { 
+        "Name: " + $_.Name + ", Zip Code: " + $_.ZipCode + ", Path: " + $_.ItemPath;
+        $_.Editing.BeginEdit();
+        $_.Fields["ZipCode"].Value = "92606";
+        $_.Editing.EndEdit();
+    } 
+
+Name: Hero_Logo, Zip Code: 123456, Path: /sitecore/media library/Images/Hero_Logo
+True
+Name: shutterstock_7507262231, Zip Code: 777888999, Path: /sitecore/media library/Images/shutterstock_7507262231
+True
+
+---
+$NamePart = "Media folder"
+$DefaultPath = "master:/Media Library/Images"
+Get-ChildItem -Path $DefaultPath -Recurse `
+    | where-object { $_.TemplateName -notmatch "Media folder" } `
+    | Foreach-Object { 
+        "Name: " + $_.Name + ", Zip Code: " + $_.ZipCode + ", Path: " + $_.ItemPath;
+        $_.ZipCode = "92868";
+        "After Updated Zip Code: " + $_.ZipCode;
+    } 
+    
+Name: Hero_Logo, Zip Code: 92606, Path: /sitecore/media library/Images/Hero_Logo
+After Updated Zip Code: 92868
+Name: shutterstock_7507262231, Zip Code: 92606, Path: /sitecore/media library/Images/shutterstock_7507262231
+After Updated Zip Code: 92868
+
+
+
+
+
+  
+https://blog.najmanowicz.com/2013/07/08/zip-and-download-sitecore-logs-with-powershell/
+
+** zip and download sitecore logs with powershell
+
+###########################################################################
+#                                                                         #
+# The script zips all log4Net files and allows users to download the zip. #
+# It will show errors for logs currently opened by Sitecore for writing.  #
+#                                                                         #
+###########################################################################
+ 
+#
+# The ZipFiles function is based on noam's answer
+# on the following Stack Overflow's page: <a class="vglnk" href="http://bit.ly/PsZip" 
+# rel="nofollow"><span>http</span><span>://</span><span>bit</span><span>.</span><span>ly</span><span>/</span><span>PsZip</span></a>
+#
+function ZipFiles( $zipArchive, $sourcedir )
+{
+    [System.Reflection.Assembly]::Load("WindowsBase,Version=3.0.0.0, `
+        Culture=neutral, PublicKeyToken=31bf3856ad364e35") | Out-Null
+    $ZipPackage=[System.IO.Packaging.ZipPackage]::Open($zipArchive, `
+        [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite)
+    $in = gci $sourceDir | select -expand fullName
+    [array]$files = $in -replace "C:","" -replace "\\","/"
+    ForEach ($file In $files) {
+        $fileName = [System.IO.Path]::GetFileName($file);
+            $partName=New-Object System.Uri($file, [System.UriKind]::Relative)
+            $part=$ZipPackage.CreatePart("/$fileName", "application/zip", `
+                [System.IO.Packaging.CompressionOption]::Maximum)
+            Try{
+                $bytes=[System.IO.File]::ReadAllBytes($file)
+            }Catch{
+                $_.Exception.ErrorRecord.Exception
+            }
+            $stream=$part.GetStream()
+            $stream.Write($bytes, 0, $bytes.Length)
+            $stream.Close()
+    }
+    $ZipPackage.Close()
+}
+ 
+# Get Sitecore folders and format the zip file name
+$dateTime = Get-Date -format "yyyy-MM-d_hhmmss"
+$dataFolder = [Sitecore.Configuration.Settings]::DataFolder
+$logsFolder = [Sitecore.Configuration.Settings]::LogFolder
+$myZipFile = "$dataFolder\logs-$datetime.zip"
+ 
+# Warn that the used log files will fail zipping
+Write-Host -f Yellow "Zipping files locked by Sitecore will fail." -n
+Write-Host -f Yellow "Files listed below were used."
+ 
+# Zip the log files
+ZipFiles $myZipFile $LogsFolder
+ 
+#Download the zipped logs
+Get-File -FullName $myZipFile | Out-Null
+ 
+#Delete the zipped logs from the server
+Remove-Item $myZipFile
+
+---
+
+function Get-MediaItemFileBased {
+    Get-ChildItem -Path "master:\sitecore\media library" -Recurse | 
+        Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } |
+        ForEach-Object {
+            $mediaItem = New-Object Sitecore.Data.Items.MediaItem $PSItem
+            if($mediaItem.FileBased) {
+                $mediaItem
+            }
+        }
+}
+
+function ConvertTo-MediaItemDatabaseBased {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+        [ValidateNotNullOrEmpty()]
+        [Sitecore.Data.Items.MediaItem]$MediaItem
+    )
+
+    if($MediaItem -eq $null) { continue }
+
+    $filePath = [Sitecore.IO.FileUtil]::MapPath($MediaItem.FilePath)
+    $fileInfo = Get-Item -Path $filePath
+    if($fileInfo.Exists) {
+        $mediaCreator = New-Object Sitecore.Resources.Media.MediaCreator
+        $mediaItemFullPath = $MediaItem.InnerItem.Paths.Path
+        $mediaCreatorOptions = New-Object Sitecore.Resources.Media.MediaCreatorOptions
+        $mediaCreatorOptions.FileBased = $false
+        $mediaCreatorOptions.Destination = $mediaItemFullPath
+        $mediaCreatorOptions.KeepExisting = $false
+
+        $filename = $mediaItem.Name + "." + $mediaItem.Extension
+        $mediaCreator.AttachStreamToMediaItem($fileInfo.Open([System.IO.FileMode]::Open), $mediaItemFullPath, $filename, $mediaCreatorOptions)
+    }
+}
+
+Get-MediaItemFileBased | ConvertTo-MediaItemDatabaseBased
+
+
+
+https://blog.najmanowicz.com/2013/07/15/zip-and-download-sitecore-media-library-folder-with-powershell/
+
+** zip and download sitecore media library folder with powershell
+
+The script that performs the operation looks as follows:
+
+###########################################################################
+#                                                                         #
+# The script zips all files in the media library under the current folder #
+# and allows users to download the zip.                                   #
+#                                                                         #
+###########################################################################
+ 
+#
+# The ZipFiles function is based on noam's answer
+# on the following Stack Overflow's page: http://bit.ly/PsZip
+#
+function ZipItems( $zipArchive, $sourcedir )
+{
+  Set-Location $sourcedir
+  [System.Reflection.Assembly]::Load("WindowsBase,Version=3.0.0.0, `
+      Culture=neutral, PublicKeyToken=31bf3856ad364e35") | Out-Null
+  $ZipPackage=[System.IO.Packaging.ZipPackage]::Open($zipArchive, `
+      [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite)
+  $items = gci -recurse $sourceDir
+  [byte[]]$buff = new-object byte[] 40960
+  $i = 0;
+  ForEach ($item In $items) {
+    $i++
+    if([Sitecore.Resources.Media.MediaManager]::HasMediaContent($item)){
+      $mediaItem = New-Object "Sitecore.Data.Items.MediaItem" $item;
+      $mediaStream = $mediaItem.GetMediaStream();
+      $fileName = Resolve-Path -Path $item.ProviderPath -Relative
+      $fileName = "$fileName.$($item.Extension)" `
+        -replace "\\","/" -replace "./", "/"
+      # Print out the file - the list will show up once the file is downloaded
+      "Added: $fileName"
+      # Show progress for the operation
+      Write-Progress -Activity "Zipping Files " `
+        -CurrentOperation "Adding $fileName" `
+        -Status "$i out of $($items.Length)" `
+        -PercentComplete ($i *100 / $items.Length)
+      $partUri = New-Object System.Uri($fileName, [System.UriKind]::Relative)
+      $partUri = [System.IO.Packaging.PackUriHelper]::CreatePartUri($partUri);
+      $part = $ZipPackage.CreatePart($partUri, `
+        "application/zip",  `
+        [System.IO.Packaging.CompressionOption]::Maximum)
+      $stream=$part.GetStream();
+      do {
+        $count = $mediaStream.Read($buff, 0, $buff.Length)
+        $stream.Write($buff, 0, $count)
+      } while ($count -gt 0)
+      $stream.Close()
+      $mediaStream.Close()
+    }
+  }
+  $ZipPackage.Close()
+}
+
+#the location will be set by PowerShell automatically based on which item was clicked
+$location = get-location
+$dateTime = Get-Date -format "yyyy-MM-d_hhmmss"
+$zipName = Split-Path -leaf $location | % { $_ -replace " ", ""}
+$dataFolder = [Sitecore.Configuration.Settings]::DataFolder
+$zipPath = "$dataFolder\$zipName-$datetime.zip"
+
+# Call the Zipping function
+ZipItems $zipPath $location
+
+#Send user the file, add -NoDialog if you want to skip the download dialog 
+Download-File -FullName $zipPath | Out-Null
+
+# Cleanup after yourself
+Remove-Item $zipPath
+
+# Close the results window - we don't really need to see the results
+Close-Window
+
+---
+function ZipItems( $zipArchive, $sourcedir )
+{
+  Set-Location $sourcedir
+  [System.Reflection.Assembly]::Load("WindowsBase,Version=3.0.0.0, `
+      Culture=neutral, PublicKeyToken=31bf3856ad364e35") > $null
+  $ZipPackage=[System.IO.Packaging.ZipPackage]::Open($zipArchive, `
+      [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite)
+  $items = @(Get-Item $sourceDir) + (Get-ChildItem -recurse $sourceDir)
+  [byte[]]$buff = new-object byte[] 40960
+  $i = 0;
+  ForEach ($item In $items) {
+    $i++
+    if([Sitecore.Resources.Media.MediaManager]::HasMediaContent($item)){
+      $mediaItem = New-Object "Sitecore.Data.Items.MediaItem" $item;
+      $mediaStream = $mediaItem.GetMediaStream();
+      $fileName = Resolve-Path -Path $item.ProviderPath -Relative
+      $fileName = "$fileName.$($item.Extension)".Replace("\","/").Replace("./","/");
+      "Added: $fileName"
+      Write-Progress -Activity "Zipping Files " -CurrentOperation "Adding $fileName" -Status "$i out of $($items.Length)" -PercentComplete ($i *100 / $items.Length)
+      $partUri = New-Object System.Uri($fileName, [System.UriKind]::Relative)
+      $partUri = [System.IO.Packaging.PackUriHelper]::CreatePartUri($partUri);
+      $part=$ZipPackage.CreatePart($partUri, "application/zip", [System.IO.Packaging.CompressionOption]::Maximum)
+      $stream=$part.GetStream();
+      do {
+        $count = $mediaStream.Read($buff, 0, $buff.Length)
+        $stream.Write($buff, 0, $count)
+      } while ($count -gt 0)
+      $stream.Close()
+      $mediaStream.Close()
+    }
+  }
+  $ZipPackage.Close()
+}
+
+$location = get-location
+$time = Get-Date -format "yyyy-MM-d_hhmmss"
+$zipName = Split-Path -leaf $location | % { $_ -replace " ", ""}
+$zipPath = "$($SitecoreDataFolder)\$zipName-$time.zip"
+
+ZipItems $zipPath $location
+Download-File -FullName $zipPath > $null
+Remove-Item $zipPath
+Close-Window
+---
+
+$path = "master:\media library\"
+get-childitem -Path $path -recurse `
+    | where-object { $_.ItemPath -Like "*Images*" } `
+    | Sort-Object -Property ItemPath `
+    | format-Table Name, Id, Language, Templatename, ItemPath  
+
+Name                    ID                                     Language TemplateName ItemPath
+----                    --                                     -------- ------------ --------
+Images                  {15451229-7534-44EF-815D-D93D6170BFCB} en       Media folder /sitecore/media library/Images
+shutterstock_7507262231 {4D22FD5D-93D5-4484-A24E-20F0C11F61B4} en       Jpeg         /sitecore/media library/Images/shutterstock_7507262231
+
+---Backup package
+$package = new-package "MediaLibrary backup Package";
+$package.Sources.Clear();
+$source = Get-Item 'master:/Media Library/' | New-ItemSource -Name 'MediaLibrary' -InstallMode Overwrite
+$package.Sources.Add($source);
+Export-Package -Project $package -Path "C:\Temp\MediaLibrary backup Package.zip" -Zip
+
+---Restore package
+Import-Package "C:\Temp\MediaLibrary backup Package.zip"  -InstallMode Overwrite
+
+
+
+
+---Backup package
+$SitecorePackageFolder = "C:\Temp\"
+$package = new-package "MediaLibrary backup Package";
+$package.Sources.Clear();
+$package.Metadata.Version = "2.0";
+$source = Get-Item 'master:/Media Library/' | New-ItemSource -Name 'MediaLibrary' -InstallMode Overwrite
+$package.Sources.Add($source);
+Export-Package -Project $package -Path "C:\Temp\MediaLibrary backup Package.zip" -Zip
+
+
+---Restore package
+Import-Package "MediaLibrary backup Package"  -InstallMode Overwrite
+
+
+---
+
+$Options = @{
+    "Option A" = "a"
+    "Option B" = "b"
+}
+
+$props = @{
+    Title = "Option Selector"
+    Description = "Choose the right option"
+    Width = 300
+    Height = 300
+    Showhint = $true
+    OkButtonName = "Execute"
+    CancelButtonName = "Close"
+    parameters = @(
+        @{
+            Name = "InputOption"; 
+            Title="Choose an Option"; 
+            Options=$Options;  
+            Tooltip="Choose One" 
+        }
+    )
+}
+
+$dialogResult = Read-Variable @props
+if ($dialogResult -ne "ok") {
+    Exit
+}
+Write-Host "Value entered by user: " $InputOption
+
+
+
+
+
+

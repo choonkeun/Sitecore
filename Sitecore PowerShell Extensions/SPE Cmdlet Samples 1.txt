@@ -1,0 +1,369 @@
+
+https://youtu.be/z3anJtoxR8E
+
+Get-Help Get-Item –Full
+Get-Help Foreach-Object –Verbose
+Get-Help Export-package -Examples
+Get-Help Get-Help –Full
+Get-Command –CommandType Cmdlet
+Get-Command Get-*
+
+Get-Item -Path master:\content\home
+Get-Item -Path master: -ID "{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}"
+Get-Item -Path master: -Uri "sitecore://master/{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}?lang=en&ver=1"
+Get-Item -Path master: -Query "/sitecore/content//*[@@templatename='Sample Item']"
+
+Name                             Children Language Version Id                                     TemplateName
+----                             -------- -------- ------- --                                     ------------
+Home                             True     en       1       {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} Sample Item
+
+---
+$DefaultPath = "/sitecore/content"
+$NamePart = "Default"
+
+Get-ChildItem -path $DefaultPath -recurse `
+  | Where-Object { $_.TemplateName -match $NamePart } `
+  | format-Table DisplayName, Name, Templatename
+---
+Name         : Getting Started with Sitecore Helix
+DisplayName  : Getting Started with Sitecore Helix
+HasChildren  : False
+Language     : en
+Version      : 1
+ID           : {1D8BA329-E1A1-44E3-949B-45EF7D00289E}
+Database     : master
+TemplateName : Default
+ItemPath     : /sitecore/content/Home/Getting Started with Sitecore Helix
+---
+Get-Help Where-Object
+Where-Object [-Property] <string> [[-Value] <Object>] [-InputObject <psobject>] [-EQ]  [<CommonParameters>]
+Where-Object [-FilterScript] <scriptblock> [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CEQ [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -NE [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CNE [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -GT [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CGT [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -LT [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CLT [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -GE [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CGE [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -LE [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CLE [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -Like [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CLike [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -NotLike [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CNotLike [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -Match [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CMatch [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -NotMatch [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CNotMatch [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -Contains [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CContains [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -NotContains [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CNotContains [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -In [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CIn [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -NotIn [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -CNotIn [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -Is [-InputObject <psobject>]  [<CommonParameters>]
+Where-Object [-Property] <string> [[-Value] <Object>] -IsNot [-InputObject <psobject>]  [<CommonParameters>]
+
+Get-Help Format-Table
+SYNTAX
+Format-Table [[-Property] <Object[]>] [-AutoSize] [-HideTableHeaders] [-Wrap] [-GroupBy <Object>] [-View <string>] [-ShowError] [-DisplayError] [-Force] [-Expand {CoreOnly | EnumOnly | Both}] [-InputObject <psobject>]
+[<CommonParameters>]
+
+
+Get-Item -Path master: -Query "/sitecore/Media Library"
+
+Name                             Children Language Version Id                                     TemplateName
+----                             -------- -------- ------- --                                     ------------
+media library                    True     en       1       {3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1} Main section
+
+---
+Get-Item -Path master: -Query "/sitecore/Media Library"
+  
+Name                             Children Language Version Id                                     TemplateName
+----                             -------- -------- ------- --                                     ------------
+media library                    True     en       1       {3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1} Main section
+
+---
+Get-ChildItem -path "/sitecore/Media Library" -recurse `
+  | format-Table DisplayName, Name, Templatename
+ 
+DisplayName               Name                      TemplateName
+-----------               ----                      ------------
+Default Website           Default Website           Media folder
+cover                     cover                     Jpeg
+sc_logo                   sc_logo                   Image
+Files                     Files                     Media folder
+Images                    Images                    Media folder
+
+
+---
+$DefaultPath = "/sitecore/content"
+$NamePart = "Default"
+
+Get-ChildItem -path $DefaultPath -recurse `
+  | Where-Object { $_.TemplateName -match $NamePart } `
+  | format-Table DisplayName, Name, HasChildren, ID, Language, Templatename, ItemPath
+
+---
+
+"/sitecore/Media Library"
+
+$DefaultPath = "/sitecore/content"
+$NamePart = "Hero"
+-path "/sitecore/Media Library" -recurse `
+Find-Item -Index sitecore_master_index `
+  | Where 'Name.Contains(@0) and Path.StartsWith(@1)' `
+  | WhereValues $NamePart, $DefaultPath | Initialize-Item 
+---
+
+Find-Item -Index sitecore_master_index | Where 'Name.Contains("Hero") and Path.StartsWith("/sitecore/content")' | format-Table DisplayName, Name, Templatename 
+---
+$TemplatePart = "Template"
+Find-Item -Index sitecore_master_index `
+    | Where-Object { $_.TemplateName -match $TemplatePart } `
+
+Name                             Lang.   Version Database     Item Id                                Template Name
+----                             -----   ------- --------     -------                                -------------
+Body Copy Content                en      1       master       {8FE10CB5-0838-4F10-9BAC-5E9D3685D4BD} Template section
+Body Copy                        en      1       master       {718AEA46-A214-41EE-8CEF-1B6A3E7266AF} Template field
+Title                            en      1       master       {FD3F8D73-4CE9-4486-9716-0EA08719096D} Template field
+Hero Image Content               en      1       master       {3CCFE3BA-D3F9-4D75-A433-A9297D98C97B} Template section
+Hero Image                       en      1       master       {A2E99AB2-DB78-4B83-877C-233F9789A1E5} Template field
+H---
+
+Get-Help Format-Table
+$TemplatePart = "Template"
+Find-Item -Index sitecore_master_index `
+    | Where-Object { $_.TemplateName -match $TemplatePart } 
+    
+NAME
+    Format-Table
+
+SYNTAX
+    Format-Table [[-Property] <Object[]>] [-AutoSize] [-HideTableHeaders] [-Wrap] [-GroupBy <Object>] [-View <string>] [-ShowError] [-DisplayError] [-Force] [-Expand {CoreOnly | EnumOnly | Both}] [-InputObject <psobject>]
+    [<CommonParameters>]
+
+
+ALIASES
+    ft
+
+
+REMARKS
+    None
+
+
+Name         : Body Copy Content
+ItemId       : {8FE10CB5-0838-4F10-9BAC-5E9D3685D4BD}
+Language     : en
+Version      : 1
+DatabaseName : master
+Path         : /sitecore/templates/feature/pagecontent/body copy/body copy content
+TemplateName : Template section
+
+
+Name         : Body Copy
+ItemId       : {718AEA46-A214-41EE-8CEF-1B6A3E7266AF}
+Language     : en
+Version      : 1
+DatabaseName : master
+Path         : /sitecore/templates/feature/pagecontent/body copy/body copy content/body copy
+TemplateName : Template field
+
+---
+Command         Description
+--------------- ------------------------------------------------------------------------------------
+Get-Item        Returns an object at the specified path.
+Get-ChildItem   Returns children at the specified path. Supports recursion.
+Get-Help        Returns the help documentation for the specified command or document.
+Get-Command     Returns a list of commands.
+Get-Member      Returns the methods and properties for the specified object.
+
+ForEach-Object  Enumerates over the objects passed through the pipeline.
+
+Where-Object    Enumerates over the objects passed through the pipeline and filters objects.
+Select-Object   Returns objects from the pipeline with the specified properties and filters objects.
+Sort-Object     Sorts the pipeline objects with the specified criteria; usually a property name.
+
+---
+Get-Help Find-Item
+
+SYNTAX
+    Find-Item [-Criteria <SearchCriteria[]>] [-FacetOn <String[]>] [-FacetMinCount <Int32>] [-Index] <String> [-QueryType <Type>] [-OrderBy <String>] [-First <Int32>] [-Last <Int32>] [-Skip <Int32>] [-Property <String[]>]
+    [<CommonParameters>]
+
+    Find-Item [-Where <String>] [-WhereValues <Object[]>] [-Filter <String>] [-FilterValues <Object[]>] [-FacetOn <String[]>] [-FacetMinCount <Int32>] [-Index] <String> [-QueryType <Type>] [-OrderBy <String>] [-First <Int32>] [-Last
+    <Int32>] [-Skip <Int32>] [-Property <String[]>] [<CommonParameters>]
+
+    Find-Item [-FacetOn <String[]>] [-FacetMinCount <Int32>] [-WherePredicate <Object>] [-FilterPredicate <Object>] [-Index] <String> [-QueryType <Type>] [-OrderBy <String>] [-First <Int32>] [-Last <Int32>] [-Skip <Int32>] [-Property
+    <String[]>] [<CommonParameters>]
+
+    Find-Item [-FacetOn <String[]>] [-FacetMinCount <Int32>] [-ScopeQuery <String>] [-Index] <String> [-QueryType <Type>] [-OrderBy <String>] [-First <Int32>] [-Last <Int32>] [-Skip <Int32>] [-Property <String[]>] [<CommonParameters>]
+
+    Find-Item [-FacetOn <String[]>] [-FacetMinCount <Int32>] [-SearchStringModels <SearchStringModel[]>] [-Index] <String> [-QueryType <Type>] [-OrderBy <String>] [-First <Int32>] [-Last <Int32>] [-Skip <Int32>] [-Property <String[]>]
+    [<CommonParameters>]
+---
+$path = "master:\content\home\"
+Get-ChildItem -Path $path -Recurse | 
+    Where-Object { $_.Name -like "*Sitecore*" } | 
+    #Select-Object -Property Name, ID, database, ItemPath
+    Sort-Object -Property Name
+---    
+"SomeParameter" = @("data","data2")
+
+Get-Help Find-Item
+$TemplatePart = "Template"
+$OrderBy = "Path"
+$Fields = @("Name", "Language", "ItemId", "Templatename", "Path")
+Find-Item -Index sitecore_master_index -OrderBy $OrderBy -Property $Fields `
+    | Where-Object { $_.TemplateName -match $TemplatePart } `
+--
+$TemplatePart = "Template"
+$OrderBy = "Path"
+$Fields = @("Name", "Language", "ItemId", "TemplateName", "Path")
+Find-Item -Index sitecore_master_index -Property $Fields  -OrderBy $OrderBy -First 10 `
+---
+$TemplatePart = "layout"
+$OrderBy = "Path"
+$Fields = @("Name", "Language", "ItemId", "TemplateName", "Path")
+Find-Item -Index sitecore_master_index -Property $Fields  -OrderBy $OrderBy -First 10 `
+    | Where-Object { $_.TemplateName -match $TemplatePart }
+
+ItemId       : {5861BEF6-7848-4F6A-BB65-8FDFD098159E}
+Language     : en
+Name         : Website
+Path         : /sitecore/layout/layouts/project/website
+TemplateName : Layout Folder
+
+ItemId       : {DA279311-B061-47C8-B26E-75F1BFA85EDF}
+Language     : en
+Name         : Default
+Path         : /sitecore/layout/layouts/project/website/default
+TemplateName : Layout
+---
+    
+Name                              Language ItemId                                 TemplateName      Path
+----                              -------- ------                                 ------------      ----
+Black                             da       {81184848-ECF9-4448-8515-DFDBC83AC41B} Standard template /sitecore/system/modules/powershell/console colors/black
+Black                             en       {81184848-ECF9-4448-8515-DFDBC83AC41B} Standard template /sitecore/system/modules/powershell/console colors/black
+Black                             ja-JP    {81184848-ECF9-4448-8515-DFDBC83AC41B} Standard template /sitecore/system/modules/powershell/console colors/black
+Blue                              en       {BD085463-EEB5-4BB8-8473-078943D7EFD8} Standard template /sitecore/system/modules/powershell/console colors/blue
+Blue                              ja-JP    {BD085463-EEB5-4BB8-8473-078943D7EFD8} Standard template /sitecore/system/modules/powershell/console colors/blue
+Blue                              da       {BD085463-EEB5-4BB8-8473-078943D7EFD8} Standard template /sitecore/system/modules/powershell/console colors/blue
+Red                               en       {0E7B2B4A-1E41-48D7-8063-FC1C1E00C2E5} Standard template /sitecore/system/modules/powershell/console colors/red
+Red                               ja-JP    {0E7B2B4A-1E41-48D7-8063-FC1C1E00C2E5} Standard template /sitecore/system/modules/powershell/console colors/red    
+---
+
+$Fields = @("Name", "Language", "ItemId", "TemplateName", "Path")
+Find-Item -Index sitecore_master_index -Property $Fields  -OrderBy $OrderBy -First 10 `
+
+$criteria = @(
+    @{Filter = "StartsWith"; Field = "_fullpath"; Value = "/sitecore/content/" }
+)
+$props = @{
+    Index = "sitecore_master_index"
+    Criteria = $criteria
+    Property = 
+}
+
+Find-Item @props -First 5 | Select-Object #-Expand "Fields"
+
+---
+Get-Help Format-Table
+$TemplatePart = "Template"
+$NamePart = "*Body*"
+Find-Item -Index sitecore_master_index `
+    | Where-Object { $_.TemplateName -match $TemplatePart } `
+    | Where-Object { $_.Name -Like $NamePart } 
+    | Where-Object { $_.Name -Contains $NamePart } 
+
+    Name                             Lang.   Version Database     Item Id                                Template Name
+----                             -----   ------- --------     -------                                -------------
+Body Copy                        en      1       master       {718AEA46-A214-41EE-8CEF-1B6A3E7266AF} Template field
+Body Copy                        en      1       master       {2C9951AE-5A1E-4A61-BAE4-6398143708BC} Template
+---
+Get-Help Format-Table
+$TemplatePart = "Template"
+$NamePart = "*Body*"
+Find-Item -Index sitecore_master_index `
+    | Where-Object { $_.TemplateName -match $TemplatePart } `
+    | Where-Object { $_.Name -Like $NamePart } 
+    | format-Table ItemId, Language, Templatename, Path
+
+    ame         : Body Copy Content
+ItemId       : {8FE10CB5-0838-4F10-9BAC-5E9D3685D4BD}
+Language     : en
+Version      : 1
+DatabaseName : master
+Path         : /sitecore/templates/feature/pagecontent/body copy/body copy content
+TemplateName : Template section
+---
+Get-Help Format-Table
+$NamePart = "*sitecore*"
+Find-Item -Index sitecore_master_index `
+    | Where-Object { $_.Path -Like $NamePart } `
+    | format-Table ItemId, Language, Templatename, Path
+    
+ItemId                                 Language TemplateName                      Path
+------                                 -------- ------------                      ----
+{8FE10CB5-0838-4F10-9BAC-5E9D3685D4BD} en       Template section                  /sitecore/templates/feature/pagecontent/body copy/body copy content
+{718AEA46-A214-41EE-8CEF-1B6A3E7266AF} en       Template field                    /sitecore/templates/feature/pagecontent/body copy/body copy content/body copy
+{FD3F8D73-4CE9-4486-9716-0EA08719096D} en       Template field                    /sitecore/templates/feature/pagecontent/body copy/body copy content/title
+{3CCFE3BA-D3F9-4D75-A433-A9297D98C97B} en       Template section                  /sitecore/templates/feature/pagecontent/hero image/hero image content
+---
+#Get-Help Format-Table
+$NamePart = "*layout*"
+Find-Item -Index sitecore_master_index `
+    | Where-Object { $_.Path -Like $NamePart } `
+    | format-Table ItemId, Language, Templatename, Path
+    
+ItemId                                 Language TemplateName              Path
+------                                 -------- ------------              ----
+{DA279311-B061-47C8-B26E-75F1BFA85EDF} en       Layout                    /sitecore/layout/layouts/project/website/default
+{5861BEF6-7848-4F6A-BB65-8FDFD098159E} en       Layout Folder             /sitecore/layout/layouts/project/website
+{11352249-34E8-43D9-AAA5-8F5C3261AC2A} en       View rendering            /sitecore/layout/renderings/feature/pagecontent/body copy
+{EE8850A7-4C93-4F6B-9258-67BBE7863BE2} en       Rendering Folder          /sitecore/layout/renderings/feature/pagecontent
+    
+---
+$NamePart = "Body Copy"
+Find-Item -Index sitecore_master_index `
+    | Where-Object { $_.Name -Like $NamePart }
+    | format-Table DisplayName, Name, Templatename
+    
+
+Name                             Lang.   Version Database     Item Id                                Template Name
+----                             -----   ------- --------     -------                                -------------
+Body Copy                        en      1       master       {718AEA46-A214-41EE-8CEF-1B6A3E7266AF} Template field
+Body Copy                        en      1       master       {11352249-34E8-43D9-AAA5-8F5C3261AC2A} View rendering
+Body Copy                        en      1       master       {2C9951AE-5A1E-4A61-BAE4-6398143708BC} Template    
+ 
+---
+$path = "master:\media library\"
+get-childitem -Path $path -recurse `
+    | where-object { $_.ItemPath -Like "*Images*" } `
+    | Sort-Object -Property ItemPath `
+    | format-Table Name, Id, Language, Templatename, ItemPath  
+    
+Name                    ID                                     Language TemplateName ItemPath
+----                    --                                     -------- ------------ --------
+Images                  {15451229-7534-44EF-815D-D93D6170BFCB} en       Media folder /sitecore/media library/Images
+Hero_Logo               {B46CD53F-2BBD-4BC5-BE8A-95AE1CF62E9E} en       Image        /sitecore/media library/Images/Hero_Logo
+shutterstock_7507262231 {4D22FD5D-93D5-4484-A24E-20F0C11F61B4} en       Jpeg         /sitecore/media library/Images/shutterstock_7507262231
+    
+---
+Find-Item -Index sitecore_master_index `
+
+Name                             Lang.   Version Database     Item Id                                Template Name
+----                             -----   ------- --------     -------                                -------------
+Body Copy Content                en      1       master       {8FE10CB5-0838-4F10-9BAC-5E9D3685D4BD} Template section
+Body Copy                        en      1       master       {718AEA46-A214-41EE-8CEF-1B6A3E7266AF} Template field
+Title                            en      1       master       {FD3F8D73-4CE9-4486-9716-0EA08719096D} Template field
+Hero Image Content               en      1       master       {3CCFE3BA-D3F9-4D75-A433-A9297D98C97B} Template section
+Hero Image                       en      1       master       {A2E99AB2-DB78-4B83-877C-233F9789A1E5} Template field
+
+
+
+

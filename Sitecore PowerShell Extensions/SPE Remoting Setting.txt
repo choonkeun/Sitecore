@@ -1,0 +1,33 @@
+
+
+https://www.grc.com/passwords.htm
+FC6699B1752D75E60C96D8139B2518412376804FC7CDD58595BC47DFBF47199A
+
+---
+$name = "sitecore\PowerShellExtensionAPI"
+---
+$sharedSecret = "FC6699B1752D75E60C96D8139B2518412376804FC7CDD58595BC47DFBF47199A"
+$name = "sitecore\admin"
+$sitecoreUrl = "https://xm1.cm.dev.local"
+
+Import-Module -Name SPE
+$session = New-ScriptSession -Username $name -SharedSecret $sharedSecret -ConnectionUri $sitecoreUrl
+write-host "Started..."
+if ($session -ne $null) {
+    write-host "Connected to Sitecore server $sitecoreUrl"
+} else {
+    write-error "Login failed to Sitecore server $sitecoreUrl for user $name."
+}
+Invoke-RemoteScript -Session $session -ScriptBlock { 
+    $env:COMPUTERNAME
+    $path = "master:\media library\"
+    get-childitem -Path $path -recurse `
+        | where-object { $_.ItemPath -Like "*Images*" } `
+        | Sort-Object -Property ItemPath `
+        | format-Table Name, Id, Language, Templatename, ItemPath  
+}
+write-host "Finished..."
+Stop-ScriptSession -Session $session
+
+
+      
