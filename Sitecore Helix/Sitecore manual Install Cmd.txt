@@ -1,0 +1,28 @@
+
+"C:\Solr\solr-8.4.0\bin\solr.cmd" -p 8983
+
+
+cd c:\solr
+
+"C:\Program Files\Java\jre1.8.0_291\bin\keytool.exe" -genkeypair -alias solr-ssl -keyalg RSA -keysize 2048 -keypass secret -storepass secret -validity 9999 -keystore solr-ssl.keystore.jks -ext SAN=DNS:localhost,IP:127.0.0.1 -dname "CN=localhost, OU=Organizational Unit, L=Location, ST=State, C=Country"
+
+
+cd c:\solr
+
+"C:\Program Files\Java\jre1.8.0_291\bin\keytool.exe" -importkeystore -srckeystore solr-ssl.keystore.jks -destkeystore solr-ssl.keystore.p12 -srcstoretype jks -deststoretype pkcs12 -srcstorepass secret -deststorepass secret
+
+
+"C:\Solr\nssm-2.24\win64\nssm.exe" install SOLR-8.4.0
+
+
+Register-PSRepository -Name SitecoreGallery -SourceLocation https://sitecore.myget.org/F/sc-powershell/api/v2
+
+Install-Module SitecoreInstallFramework
+
+Update-Module SitecoreInstallFramework
+
+Get-Module SitecoreInstallFramework -listAvailable
+
+
+
+
